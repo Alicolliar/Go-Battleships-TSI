@@ -13,28 +13,32 @@ type CoordinatePoint struct {
 	player1HitShot bool
 }
 
+var alphabet = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
+
+var xLength int
+
 var gameBoard [25]CoordinatePoint
 
 func decodeCoordString(coordString string) (int, error) {
 	if len(coordString) > 2 {
-		return 0, errors.New("string too long")
+		return 0, errors.New("coord string too long")
 	}
-	firstSection := (int(coordString[0]) - 64)
-	secondSection := (int(coordString[1]) - 48)
+	firstSection := (int(coordString[0]) - 65)
+	secondSection := (int(coordString[1]) - 49)
 	if firstSection < 0 || firstSection > 4 {
-		return 0, errors.New(`incorrect X-Coord`)
+		return 0, errors.New(`invalid X-Coord`)
 	} else if secondSection < 0 || secondSection > 4 {
-		return 0, errors.New(`incorrect Y-Coord`)
+		return 0, errors.New(`invalid Y-Coord`)
 	}
-	return ((((firstSection - 1) * 5) + secondSection) - 1), nil
+	return (((firstSection) * 5) + secondSection), nil
 }
 
 func createGameBoard() [25]CoordinatePoint {
+	xLength = len(alphabet)
 	var gameBoardCreation [25]CoordinatePoint
-	alphabet := [5]string{"A", "B", "C", "D", "E"}
 	var indexPoint int
 	for _, letter := range alphabet {
-		for i := 1; i <= len(alphabet); i++ {
+		for i := 1; i <= xLength; i++ {
 			combinedCoord := letter + strconv.Itoa(i)
 			newBoardPoint := CoordinatePoint{coordString: combinedCoord, player2Ship: false, player1Ship: false, player2HitShot: false, player1HitShot: false}
 			gameBoardCreation[indexPoint] = newBoardPoint
@@ -44,20 +48,16 @@ func createGameBoard() [25]CoordinatePoint {
 	return gameBoardCreation
 }
 
-func checkOccupation(playerNum int, positionString string) (error, bool) {
-	coordIndex, err := decodeCoordString(positionString)
-	if err != nil {
-		return err, false
-	}
+func checkOccupation(playerNum int, coordIndex int) (bool, error) {
 	currentPoint := gameBoard[coordIndex]
 	if playerNum == 1 {
-		return nil, currentPoint.player1Ship
+		return currentPoint.player2Ship, nil
 	} else if playerNum == 2 {
-		return nil, currentPoint.player1Ship
+		return currentPoint.player1Ship, nil
 	} else if playerNum == 0 {
-		return nil, currentPoint.player1Ship || currentPoint.player2Ship
+		return currentPoint.player1Ship || currentPoint.player2Ship, nil
 	}
-	return errors.New("player not in range"), false
+	return false, errors.New("player not in range")
 }
 
 func playerOccupation(playerNum int, positionString string) error {
@@ -74,3 +74,29 @@ func playerOccupation(playerNum int, positionString string) error {
 	}
 	return errors.New("player not in range")
 }
+
+func playerShoot(playerNum int, positionString string) (bool, error) {
+	coordI, err := decodeCoordString(positionString)
+	if err != nil {
+		return false, err
+	}
+	occupied, err := checkOccupation(playerNum, coordI)
+	if err != nil {
+		return false, err
+	}
+	if occupied {
+		if playerNum == 1 {
+			gameBoard[coordI].player1HitShot = true
+			return true, nil
+		} else if playerNum == 2 {
+			gameBoard[coordI].player2HitShot = true
+			return true, nil
+		} else {
+			return false, errors.New("player not in range")
+		}
+	} else {
+		return false, nil
+	}
+}
+
+func registerShot(userNum int, coordIndex int)
