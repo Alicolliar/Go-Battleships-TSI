@@ -16,7 +16,6 @@ func bootstrapGame() error {
 		return err
 	}
 	aiInitialisation(2)
-	fmt.Print(users)
 	return err
 }
 

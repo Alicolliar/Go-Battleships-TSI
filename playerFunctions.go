@@ -37,9 +37,7 @@ func userInitialisation(userNum int) error {
 }
 
 func playerTurn(userNum int) error {
-	fmt.Print(users)
 	displayBoardStates(userNum)
-	fmt.Print(gameBoard)
 	coordOk := false
 	for !coordOk {
 		result := false
@@ -68,7 +66,6 @@ func playerTurn(userNum int) error {
 func shipPlacement(userNum int) error {
 	for i := 1; i <= 5; i++ {
 		coordsOk := false
-		fmt.Println(userNum)
 		for !coordsOk {
 			fmt.Print("Please enter the position for a ship.\n> ")
 			userCoords, err := inputReader.ReadString('\n')

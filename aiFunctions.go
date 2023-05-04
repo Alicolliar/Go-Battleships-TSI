@@ -7,7 +7,7 @@ import (
 )
 
 func aiInitialisation(aiPlayerNum int) {
-	fmt.Println("Initialising AI Player")
+	fmt.Print("Initialising AI Player\n\n\n")
 	newUserObject := userObject{}
 	newUserObject.username = "Computer"
 	newUserObject.userNum = aiPlayerNum
@@ -50,7 +50,6 @@ func aiPlaceships(aiPlayerNum int) {
 func aiPlayerTurn(aiPlayerNum int) {
 	coords := genRandomCoords()
 	result, _ := playerShoot(aiPlayerNum, coords)
-	fmt.Print(result)
 	if !result {
 		fmt.Printf("%v was a miss!\n", coords)
 		registerShot(aiPlayerNum, false)
