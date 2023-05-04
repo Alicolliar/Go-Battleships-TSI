@@ -10,7 +10,7 @@ build-mac: test
 	env GOOS=darwin GOARCH=amd64 go build -o=build/tsi-battleships-mac .
 
 build-windows: test
-	env GOOS=windows GOARCH=amd64 go build -o=build/tsi-battleships-windows .
+	env GOOS=windows GOARCH=amd64 go build -o=build/tsi-battleships-windows.exe .
 
 build-linux: test
 	env GOOS=linux GOARCH=amd64 go build -o=build/tsi-battleships-linux .

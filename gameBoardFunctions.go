@@ -13,15 +13,15 @@ type CoordinatePoint struct {
 	player1HitShot bool
 }
 
-var alphabet = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J"}
+var alphabet = []string{"A", "B", "C", "D", "E"}
 
 var xLength int
 
 var gameBoard [25]CoordinatePoint
 
 func decodeCoordString(coordString string) (int, error) {
-	if len(coordString) > 2 {
-		return 0, errors.New("coord string too long")
+	if len(coordString) > 2 || len(coordString) < 1 {
+		return 0, errors.New("coord string wrong length")
 	}
 	firstSection := (int(coordString[0]) - 65)
 	secondSection := (int(coordString[1]) - 49)
@@ -37,6 +37,7 @@ func createGameBoard() [25]CoordinatePoint {
 	xLength = len(alphabet)
 	var gameBoardCreation [25]CoordinatePoint
 	var indexPoint int
+	totalRemainingShips = 10
 	for _, letter := range alphabet {
 		for i := 1; i <= xLength; i++ {
 			combinedCoord := letter + strconv.Itoa(i)
@@ -65,6 +66,14 @@ func playerOccupation(playerNum int, positionString string) error {
 	if err != nil {
 		return err
 	}
+	occupCheck := false
+	occupCheck, err = checkOccupation(0, coordIndex)
+	if err != nil {
+		return err
+	}
+	if occupCheck {
+		return errors.New("position already occupied")
+	}
 	if playerNum == 1 {
 		gameBoard[coordIndex].player1Ship = true
 		return nil
@@ -75,28 +84,16 @@ func playerOccupation(playerNum int, positionString string) error {
 	return errors.New("player not in range")
 }
 
-func playerShoot(playerNum int, positionString string) (bool, error) {
-	coordI, err := decodeCoordString(positionString)
-	if err != nil {
-		return false, err
-	}
-	occupied, err := checkOccupation(playerNum, coordI)
-	if err != nil {
-		return false, err
-	}
-	if occupied {
-		if playerNum == 1 {
+func registerShot(userNum int, coords string, hitResult bool) {
+	coordI, _ := decodeCoordString(coords)
+	if hitResult {
+		if userNum == 1 {
 			gameBoard[coordI].player1HitShot = true
-			return true, nil
-		} else if playerNum == 2 {
+		} else if userNum == 2 {
 			gameBoard[coordI].player2HitShot = true
-			return true, nil
-		} else {
-			return false, errors.New("player not in range")
 		}
+		totalRemainingShips--
 	} else {
-		return false, nil
+
 	}
 }
-
-func registerShot(userNum int, coordIndex int)
