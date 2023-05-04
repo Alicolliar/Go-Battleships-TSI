@@ -12,7 +12,7 @@ func aiInitialisation(aiPlayerNum int) {
 	newUserObject.username = "Computer"
 	newUserObject.userNum = aiPlayerNum
 	newUserObject.remainingShips = 5
-
+	users[1] = newUserObject
 	aiPlaceships(aiPlayerNum)
 }
 
@@ -22,11 +22,10 @@ func genRandomCoords() string {
 	for !coordsOk {
 		xCoord := int(math.Round(rand.Float64() * 4))
 		yCoord := int(math.Round(rand.Float64()*4)) + 1
-		randCoordString := fmt.Sprintf("%v%d", string(alphabet[xCoord]), yCoord)
+		randCoordString = fmt.Sprintf("%s%d", string(alphabet[xCoord]), yCoord)
 		_, err := decodeCoordString(randCoordString)
 		if err != nil {
 			coordsOk = false
-			continue
 		}
 		coordsOk = true
 	}
@@ -36,11 +35,12 @@ func genRandomCoords() string {
 func aiPlaceships(aiPlayerNum int) {
 	for i := 0; i <= 5; i++ {
 		coordsOk := false
-		if !coordsOk {
+		for !coordsOk {
 			coordString := genRandomCoords()
 			err := playerOccupation(aiPlayerNum, coordString)
 			if err != nil {
 				coordsOk = false
+				continue
 			}
 			coordsOk = true
 		}
@@ -50,11 +50,12 @@ func aiPlaceships(aiPlayerNum int) {
 func aiPlayerTurn(aiPlayerNum int) {
 	coords := genRandomCoords()
 	result, _ := playerShoot(aiPlayerNum, coords)
+	fmt.Print(result)
 	if !result {
 		fmt.Printf("%v was a miss!\n", coords)
-		registerShot(aiPlayerNum, coords, true)
+		registerShot(aiPlayerNum, false)
 	} else if result {
 		fmt.Printf("%v was a hit! Ship sunk\n", coords)
-		registerShot(aiPlayerNum, coords, true)
+		registerShot(aiPlayerNum, true)
 	}
 }

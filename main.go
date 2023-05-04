@@ -16,6 +16,7 @@ func bootstrapGame() error {
 		return err
 	}
 	aiInitialisation(2)
+	fmt.Print(users)
 	return err
 }
 
@@ -26,13 +27,23 @@ func main() {
 		panic(err)
 	}
 	turnCounter := 0
-	for totalRemainingShips > 0 && turnCounter < 20 {
+	for (users[0].remainingShips > 0 && users[1].remainingShips > 0) && turnCounter <= 20 {
 		fmt.Printf("Turn no.: %d\n\n", turnCounter)
 		turnCounter++
 		for _, player := range users {
 			playerNum := player.userNum
-			playerTurn(playerNum)
-
+			if player.username == "Computer" {
+				aiPlayerTurn(playerNum)
+			} else {
+				playerTurn(playerNum)
+			}
 		}
+	}
+	if users[0].score > users[1].score {
+		fmt.Printf("Well done %v, you have won!", users[0].username)
+	} else if users[0].score == users[1].score {
+		fmt.Print("Something has gone horribly, horribly wrong, as it seems you both drew, which shouldn't really be possibly")
+	} else {
+		fmt.Print("Ah, better luck next time, the computer won that one.")
 	}
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"strconv"
+	"strings"
 )
 
 type CoordinatePoint struct {
@@ -20,7 +21,8 @@ var xLength int
 var gameBoard [25]CoordinatePoint
 
 func decodeCoordString(coordString string) (int, error) {
-	if len(coordString) > 2 || len(coordString) < 1 {
+	coordList := strings.Split(coordString, "")
+	if len(coordList) > 2 || len(coordList) <= 1 {
 		return 0, errors.New("coord string wrong length")
 	}
 	firstSection := (int(coordString[0]) - 65)
@@ -80,20 +82,7 @@ func playerOccupation(playerNum int, positionString string) error {
 	} else if playerNum == 2 {
 		gameBoard[coordIndex].player2Ship = true
 		return nil
-	}
-	return errors.New("player not in range")
-}
-
-func registerShot(userNum int, coords string, hitResult bool) {
-	coordI, _ := decodeCoordString(coords)
-	if hitResult {
-		if userNum == 1 {
-			gameBoard[coordI].player1HitShot = true
-		} else if userNum == 2 {
-			gameBoard[coordI].player2HitShot = true
-		}
-		totalRemainingShips--
 	} else {
-
+		return errors.New("player not in range")
 	}
 }

@@ -38,7 +38,7 @@ func displayBoardStates(userNum int) {
 		xCounter++
 	}
 	fmt.Print("\n\n")
-	fmt.Printf("Coordinate\tShip?\tHit?\n")
+	fmt.Printf("Coord\tShip?\tHit?\n")
 	for _, coordPoint := range gameBoard {
 		fmt.Printf("%v\t", coordPoint.coordString)
 		if stringInSlice(coordPoint.coordString, shipContaining) {
@@ -65,9 +65,11 @@ func playerShoot(playerNum int, positionString string) (bool, error) {
 	if occupied {
 		if playerNum == 1 {
 			gameBoard[coordI].player1HitShot = true
+			gameBoard[coordI].player2Ship = false
 			return true, nil
 		} else if playerNum == 2 {
 			gameBoard[coordI].player2HitShot = true
+			gameBoard[coordI].player1Ship = false
 			return true, nil
 		} else {
 			return false, errors.New("player not in range")

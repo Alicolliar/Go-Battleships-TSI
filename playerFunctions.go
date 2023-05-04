@@ -8,6 +8,7 @@ type userObject struct {
 	userNum        int
 	username       string
 	remainingShips int
+	score          int
 }
 
 var users [2]userObject
@@ -17,14 +18,15 @@ var totalRemainingShips int
 func userInitialisation(userNum int) error {
 	newUserObject := userObject{}
 	newUserObject.remainingShips = 5
+	newUserObject.score = 0
 	fmt.Printf("Input your username\n> ")
 	username, err := inputReader.ReadString('\n')
 	if err != nil {
 		return err
 	}
-	newUserObject.username = username
+	newUserObject.username = username[:len(username)-1]
 	newUserObject.userNum = userNum
-	fmt.Printf("Welcome to the game, %v. You are player %d\n\n", username, userNum)
+	fmt.Printf("Welcome to the game, %v. You are player %d\n\n", newUserObject.username, userNum)
 	users[userNum-1] = newUserObject
 	err = shipPlacement(userNum)
 	if err != nil {
@@ -35,6 +37,7 @@ func userInitialisation(userNum int) error {
 }
 
 func playerTurn(userNum int) error {
+	fmt.Print(users)
 	displayBoardStates(userNum)
 	fmt.Print(gameBoard)
 	coordOk := false
@@ -50,12 +53,12 @@ func playerTurn(userNum int) error {
 			fmt.Println(err)
 			coordOk = false
 		} else if !result {
-			fmt.Printf("%v was a miss!\n", coords)
-			registerShot(userNum, coords, false)
+			fmt.Printf("%v was a miss!\n", coords[:len(coords)-1])
+			registerShot(userNum, false)
 			coordOk = true
 		} else if result {
-			fmt.Printf("%v was a hit! Ship sunk\n", coords)
-			registerShot(userNum, coords, true)
+			fmt.Printf("%v was a hit! Ship sunk\n", coords[:len(coords)-1])
+			registerShot(userNum, true)
 			coordOk = true
 		}
 	}
@@ -65,6 +68,7 @@ func playerTurn(userNum int) error {
 func shipPlacement(userNum int) error {
 	for i := 1; i <= 5; i++ {
 		coordsOk := false
+		fmt.Println(userNum)
 		for !coordsOk {
 			fmt.Print("Please enter the position for a ship.\n> ")
 			userCoords, err := inputReader.ReadString('\n')
@@ -86,4 +90,16 @@ func shipPlacement(userNum int) error {
 		}
 	}
 	return nil
+}
+
+func registerShot(userNum int, hitResult bool) {
+	if hitResult {
+		totalRemainingShips--
+		users[userNum-1].score++
+		if userNum == 1 {
+			users[1].remainingShips--
+		} else if userNum == 2 {
+			users[0].remainingShips--
+		}
+	}
 }
